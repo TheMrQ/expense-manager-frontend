@@ -152,8 +152,8 @@ const handleSubmit = async () => {
   successMessage.value = ''
 
   const endpoint = isRegistering.value 
-      ? 'http://localhost/expense_manager/backend/user/register.php' 
-      : 'http://localhost/expense_manager/backend/user/login.php'
+      ? 'http://expense-manager-api.42web.io/backend/user/register.php' 
+      : 'http://expense-manager-api.42web.io/backend/user/login.php'
       
   const payload = isRegistering.value 
       ? { display_name: form.display_name, username: form.username, email: form.email, password: form.password } 

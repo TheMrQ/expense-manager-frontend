@@ -67,7 +67,7 @@
         <div class="flex items-center space-x-6">
           <div class="flex items-center pl-6 border-l border-slate-200">
             <div class="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-lg mr-3 shadow-sm overflow-hidden">
-              <img v-if="user?.profile_picture" :src="'http://localhost/expense_manager/backend/uploads/' + user.profile_picture" class="w-full h-full object-cover">
+              <img v-if="user?.profile_picture" :src="'http://expense-manager-api.42web.io/backend/uploads/' + user.profile_picture" class="w-full h-full object-cover">
               <span v-else class="uppercase">{{ (user?.display_name || user?.username)?.charAt(0) || 'U' }}</span>
             </div>
             <div class="block">
@@ -338,7 +338,7 @@
               
               <div class="flex flex-col items-center justify-center mb-8">
                 <div class="relative w-28 h-28 rounded-full overflow-hidden bg-slate-100 group cursor-pointer border-4 border-white shadow-xl mb-3">
-                  <img v-if="user?.profile_picture" :src="'http://localhost/expense_manager/backend/uploads/' + user.profile_picture" class="w-full h-full object-cover">
+                  <img v-if="user?.profile_picture" :src="'http://expense-manager-api.42web.io/backend/uploads/' + user.profile_picture" class="w-full h-full object-cover">
                   <div v-else class="w-full h-full flex items-center justify-center text-slate-400 text-4xl font-bold uppercase">{{ (user?.display_name || user?.username)?.charAt(0) || 'U' }}</div>
                   <div class="absolute inset-0 bg-slate-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -679,7 +679,7 @@ const switchTab = (tab) => {
 // ----- PROFILE & AVATAR LOGIC -----
 const fetchProfile = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_user_details.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_user_details.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const data = await res.json()
     if (data.status === 'success') {
       profileForm.username = data.data.username
@@ -696,7 +696,7 @@ const fetchProfile = async () => {
 const updateProfile = async () => {
   isSubmitting.value = true
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/update_profile.php', { 
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/update_profile.php', { 
         method: 'POST', 
         body: JSON.stringify({ user_id: user.value.id, username: profileForm.username, display_name: profileForm.display_name, email: profileForm.email }) 
     })
@@ -711,7 +711,7 @@ const uploadAvatar = async (event) => {
   const file = event.target.files[0]; if (!file) return;
   const formData = new FormData(); formData.append('user_id', user.value.id); formData.append('profile_picture', file)
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/upload_profile_picture.php', { method: 'POST', body: formData })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/upload_profile_picture.php', { method: 'POST', body: formData })
     const data = await res.json()
     if (data.status === 'success') {
       user.value.profile_picture = data.filename; localStorage.setItem('user', JSON.stringify(user.value))
@@ -722,7 +722,7 @@ const uploadAvatar = async (event) => {
 const removeAvatar = () => {
   requireConfirmation('Remove Picture', 'Are you sure you want to remove your profile picture?', async () => {
     try {
-      const res = await fetch('http://localhost/expense_manager/backend/user/remove_profile_picture.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+      const res = await fetch('http://expense-manager-api.42web.io/backend/user/remove_profile_picture.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
       const data = await res.json()
       if (data.status === 'success') {
         user.value = data.user; localStorage.setItem('user', JSON.stringify(data.user))
@@ -735,7 +735,7 @@ const updatePassword = async () => {
   if (passForm.new !== passForm.confirm) { alert("New passwords don't match!"); return; }
   isSubmitting.value = true
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/change_password.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, current_password: passForm.current, new_password: passForm.new }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/change_password.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, current_password: passForm.current, new_password: passForm.new }) })
     const data = await res.json()
     if (data.status === 'success') {
       alert('Password successfully changed!'); passForm.current = ''; passForm.new = ''; passForm.confirm = '';
@@ -746,7 +746,7 @@ const updatePassword = async () => {
 // ----- BILLS LOGIC -----
 const fetchBills = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_bills.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_bills.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const data = await res.json()
     if (Array.isArray(data)) bills.value = data
   } catch (e) { console.error(e) }
@@ -756,13 +756,13 @@ const openBillModal = () => { billForm.name = ''; billForm.amount = ''; billForm
 const submitBill = async () => {
   isSubmitting.value = true
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/add_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, ...billForm }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/add_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, ...billForm }) })
     if ((await res.json()).status === 'success') { fetchBills(); isBillModalOpen.value = false; }
   } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
 }
 const payBill = async (id) => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/pay_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id, month: selectedMonth.value }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/pay_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id, month: selectedMonth.value }) })
     if ((await res.json()).status === 'success') {
       fetchBills();
       fetchDashboardStats();
@@ -773,7 +773,7 @@ const payBill = async (id) => {
 const deleteBill = (id) => {
   requireConfirmation('Delete Subscription', 'Are you sure you want to delete this bill?', async () => {
     try {
-      const res = await fetch('http://localhost/expense_manager/backend/user/delete_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id }) })
+      const res = await fetch('http://expense-manager-api.42web.io/backend/user/delete_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id }) })
       if ((await res.json()).status === 'success') fetchBills()
     } catch (e) { alert('Server error.') }
   })
@@ -782,18 +782,18 @@ const deleteBill = (id) => {
 // ----- OVERVIEW LOGIC -----
 const fetchCategories = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_categories.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_categories.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     categories.value = await res.json()
   } catch (e) { console.error(e) }
 }
 
 const fetchDashboardStats = async () => {
   try {
-    const statsRes = await fetch('http://localhost/expense_manager/backend/user/get_overview_stats.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const statsRes = await fetch('http://expense-manager-api.42web.io/backend/user/get_overview_stats.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const statsData = await statsRes.json()
     if (statsData.status !== 'error') stats.value = statsData
 
-    const transRes = await fetch('http://localhost/expense_manager/backend/user/get_recent_transactions.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const transRes = await fetch('http://expense-manager-api.42web.io/backend/user/get_recent_transactions.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const transData = await transRes.json()
     if (Array.isArray(transData)) transactions.value = transData
   } catch (error) { console.error(error) } finally { isLoading.value = false }
@@ -801,7 +801,7 @@ const fetchDashboardStats = async () => {
 
 const fetchAllTransactions = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_all_transactions.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_all_transactions.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const data = await res.json()
     if (Array.isArray(data)) allTransactions.value = data
   } catch (e) { console.error(e) }
@@ -809,7 +809,7 @@ const fetchAllTransactions = async () => {
 
 const fetchAnalytics = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_expense_breakdown.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, month: selectedMonth.value }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_expense_breakdown.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, month: selectedMonth.value }) })
     const data = await res.json()
     if (Array.isArray(data)) analytics.value = data
     else analytics.value = []
@@ -819,7 +819,7 @@ const fetchAnalytics = async () => {
 // ----- BUDGET LOGIC -----
 const fetchBudgets = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_budgets.php', { 
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_budgets.php', { 
         method: 'POST', body: JSON.stringify({ user_id: user.value.id, month: selectedMonth.value }) 
     })
     const data = await res.json()
@@ -841,7 +841,7 @@ const openBudgetModal = (budget) => {
 const submitBudget = async () => {
   isSubmitting.value = true
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/set_budget.php', {
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/set_budget.php', {
       method: 'POST', body: JSON.stringify({ user_id: user.value.id, category_id: activeBudget.value.category_id, month: selectedMonth.value, budget_amount: budgetForm.amount })
     })
     if ((await res.json()).status === 'success') { fetchBudgets(); isBudgetModalOpen.value = false; }
@@ -851,7 +851,7 @@ const submitBudget = async () => {
 // ----- GOALS LOGIC -----
 const fetchGoals = async () => {
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/get_goals.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/get_goals.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id }) })
     const data = await res.json()
     if (Array.isArray(data)) goals.value = data
   } catch (e) { console.error(e) }
@@ -870,7 +870,7 @@ const openGoalModal = (goal = null) => {
 
 const submitGoal = async () => {
   isSubmitting.value = true
-  const endpoint = isGoalEditMode.value ? 'http://localhost/expense_manager/backend/user/update_goal.php' : 'http://localhost/expense_manager/backend/user/add_goal.php'
+  const endpoint = isGoalEditMode.value ? 'http://expense-manager-api.42web.io/backend/user/update_goal.php' : 'http://expense-manager-api.42web.io/backend/user/add_goal.php'
   const payload = { user_id: user.value.id, name: goalForm.name, target_amount: goalForm.target_amount, deadline: goalForm.deadline }
   if (isGoalEditMode.value) payload.goal_id = activeGoalId.value
 
@@ -883,7 +883,7 @@ const submitGoal = async () => {
 const deleteGoal = (id) => {
   requireConfirmation('Delete Goal', 'Are you sure you want to delete this savings goal?', async () => {
     try {
-      const res = await fetch('http://localhost/expense_manager/backend/user/delete_goal.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: id }) })
+      const res = await fetch('http://expense-manager-api.42web.io/backend/user/delete_goal.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: id }) })
       if ((await res.json()).status === 'success') fetchGoals()
     } catch (e) { alert('Server error.') }
   })
@@ -894,7 +894,7 @@ const openContribModal = (goal) => { activeGoal.value = goal; contribForm.amount
 const submitContribution = async () => {
   isSubmitting.value = true
   try {
-    const res = await fetch('http://localhost/expense_manager/backend/user/add_contribution.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: activeGoal.value.id, amount: contribForm.amount }) })
+    const res = await fetch('http://expense-manager-api.42web.io/backend/user/add_contribution.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: activeGoal.value.id, amount: contribForm.amount }) })
     if ((await res.json()).status === 'success') { 
       fetchGoals(); 
       fetchDashboardStats();
@@ -918,7 +918,7 @@ const openTxModal = (tx = null) => {
 
 const submitTransaction = async () => {
   isSubmitting.value = true
-  const endpoint = isEditMode.value ? 'http://localhost/expense_manager/backend/user/update_transaction.php' : 'http://localhost/expense_manager/backend/user/add_transaction.php'
+  const endpoint = isEditMode.value ? 'http://expense-manager-api.42web.io/backend/user/update_transaction.php' : 'http://expense-manager-api.42web.io/backend/user/add_transaction.php'
   const payload = { user_id: user.value.id, category_id: txForm.category_id, amount: txForm.amount, date: txForm.date, note: txForm.note }
   if (isEditMode.value) payload.transaction_id = editingId.value
 
@@ -937,7 +937,7 @@ const submitTransaction = async () => {
 const deleteTransaction = (id) => {
   requireConfirmation('Delete Transaction', 'Are you sure you want to delete this transaction?', async () => {
     try {
-      const res = await fetch('http://localhost/expense_manager/backend/user/delete_transaction.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, transaction_id: id }) })
+      const res = await fetch('http://expense-manager-api.42web.io/backend/user/delete_transaction.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, transaction_id: id }) })
       if ((await res.json()).status === 'success') {
         await fetchDashboardStats()
         if (activeTab.value === 'transactions') await fetchAllTransactions()
