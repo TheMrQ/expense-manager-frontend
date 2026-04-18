@@ -1,9 +1,9 @@
 <template>
-  <div class="flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden relative w-full">
+  <div class="flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden w-full relative">
     
-    <div v-if="isMobileMenuOpen" @click="isMobileMenuOpen = false" class="fixed inset-0 bg-slate-900/60 z-30 md:hidden backdrop-blur-sm transition-opacity duration-300"></div>
+    <div v-if="isMobileMenuOpen" @click="isMobileMenuOpen = false" class="fixed inset-0 bg-slate-900/60 z-40 md:hidden backdrop-blur-sm transition-opacity duration-300"></div>
 
-    <aside :class="['w-[280px] shrink-0 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-40 fixed md:relative h-full transition-transform duration-300 ease-in-out', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0']">
+    <aside :class="['fixed inset-y-0 left-0 z-50 w-[280px] shrink-0 bg-slate-900 text-slate-300 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out md:relative md:translate-x-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
       <div @click="switchTab('overview')" class="h-20 flex items-center px-8 border-b border-white/10 shrink-0 cursor-pointer group transition-all">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 mr-3 group-hover:scale-105 transition-transform">
           <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -52,13 +52,22 @@
       </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-screen overflow-x-hidden relative bg-slate-50/50 w-full">
+    <main class="flex-1 flex flex-col h-screen overflow-x-hidden relative bg-slate-50/50 min-w-0">
+      
+      <transition name="toast-fade">
+        <div v-if="toast.show" class="fixed top-6 right-6 md:right-10 z-[100] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 font-bold text-sm shadow-blue-900/10 border border-white/20 backdrop-blur-md"
+             :class="toast.type === 'success' ? 'bg-emerald-600/90 text-white' : 'bg-rose-600/90 text-white'">
+          <svg v-if="toast.type === 'success'" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          <svg v-else class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          {{ toast.message }}
+        </div>
+      </transition>
+
       <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 md:px-10 z-10 shrink-0">
         <div class="flex items-center">
           <button @click="isMobileMenuOpen = true" class="md:hidden mr-4 p-2 -ml-2 text-slate-500 hover:text-slate-900 focus:outline-none rounded-lg hover:bg-slate-100 transition-colors">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
-          
           <div>
             <h1 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
               <span v-if="activeTab === 'overview'">Overview</span>
@@ -94,7 +103,7 @@
                 <svg class="absolute right-0 bottom-0 text-white/10 w-40 h-40 -mr-10 -mb-10 transform group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.64-2.25 1.64-1.74 0-2.1-.96-2.15-1.92H8.05c.06 1.75 1.42 2.87 2.85 3.22V19h2.38v-1.65c1.78-.34 2.94-1.4 2.94-3.07 0-2.3-1.91-2.98-3.91-3.48z"/></svg>
                 <div class="relative">
                   <p class="text-blue-100 text-sm font-medium mb-1">Total Balance</p>
-                  <h3 class="text-4xl font-extrabold text-white tracking-tight break-words">{{ isLoading ? '...' : formatCurrency(stats.total_balance) }}</h3>
+                  <h3 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight break-words">{{ isLoading ? '...' : formatCurrency(stats.total_balance) }}</h3>
                 </div>
               </div>
               <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:-translate-y-1 transition-all duration-300">
@@ -215,7 +224,7 @@
                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
                  <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                </div>
-               <h3 class="text-lg font-bold text-slate-700 mb-1">No Expense Categories Found</h3>
+               <h3 class="text-lg font-bold text-slate-700 mb-1">No Budgets Found</h3>
                <p class="text-sm text-slate-500 mb-4 px-4">Budgets are automatically generated based on your expense categories.</p>
             </div>
           </div>
@@ -378,6 +387,18 @@
               </form>
 
               <div class="border-t border-slate-100 pt-8 mt-8">
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Localization Preferences</h3>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Display Currency</label>
+                  <select v-model="userCurrency" @change="saveCurrency" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium text-slate-700 focus:ring-2 focus:ring-blue-500">
+                    <option value="USD">USD ($)</option>
+                    <option value="VND">VND (₫)</option>
+                  </select>
+                  <p class="text-xs text-slate-400 mt-2">Selecting VND automatically applies the standard exchange rate to your stored balances.</p>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-100 pt-8 mt-8">
                 <h3 class="text-lg font-bold text-slate-900 mb-4">Change Password</h3>
                 <form @submit.prevent="updatePassword" class="space-y-5">
                   <div>
@@ -444,7 +465,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount (USD)</label>
             <input v-model="txForm.amount" type="number" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-900">
           </div>
           <div>
@@ -472,7 +493,7 @@
             <input v-model="goalForm.name" type="text" required placeholder="e.g. New Laptop" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-medium text-slate-700">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Amount</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Amount (USD)</label>
             <input v-model="goalForm.target_amount" type="number" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-900">
           </div>
           <div>
@@ -492,7 +513,7 @@
         </div>
         <form @submit.prevent="submitContribution" class="p-6 space-y-5">
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount to Add</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount to Add (USD)</label>
             <input v-model="contribForm.amount" type="number" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-900">
           </div>
           <button type="submit" :disabled="isSubmitting" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-md">Add Funds</button>
@@ -508,7 +529,7 @@
         </div>
         <form @submit.prevent="submitBudget" class="p-6 space-y-5">
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Monthly Limit</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Monthly Limit (USD)</label>
             <input v-model="budgetForm.amount" type="number" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-900">
           </div>
           <button type="submit" :disabled="isSubmitting" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all shadow-md">Save Budget</button>
@@ -529,7 +550,7 @@
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount</label>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount (USD)</label>
               <input v-model="billForm.amount" type="number" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-900">
             </div>
             <div>
@@ -560,6 +581,19 @@ const router = useRouter()
 const user = ref(null)
 const activeTab = ref('overview')
 const isLoading = ref(true)
+
+// Currency Preferences
+const userCurrency = ref(localStorage.getItem('zenith_currency') || 'USD')
+const saveCurrency = () => { localStorage.setItem('zenith_currency', userCurrency.value) }
+
+// Toast Notification State
+const toast = reactive({ show: false, message: '', type: 'success' })
+const showToast = (message, type = 'success') => {
+  toast.message = message
+  toast.type = type
+  toast.show = true
+  setTimeout(() => { toast.show = false }, 3500)
+}
 
 // Mobile Menu State
 const isMobileMenuOpen = ref(false)
@@ -623,7 +657,16 @@ const profileForm = reactive({ display_name: '', username: '', email: '' })
 const passForm = reactive({ current: '', new: '', confirm: '' })
 const billForm = reactive({ name: '', amount: '', due_date: '', category_id: '' })
 
-const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0)
+// Advanced Dynamic Currency Formatter
+const formatCurrency = (value) => {
+  const num = parseFloat(value || 0)
+  if (userCurrency.value === 'VND') {
+    // Current rough standard conversion rate (1 USD = 25,400 VND)
+    const converted = num * 25400
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(converted)
+  }
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num)
+}
 
 const getCategoryIcon = (category) => {
   const icons = {
@@ -650,7 +693,7 @@ const getAnalyticsPercentage = (total) => {
 }
 
 const exportToCSV = () => {
-  if (allTransactions.value.length === 0) { alert("No transactions to export!"); return; }
+  if (allTransactions.value.length === 0) { showToast("No transactions to export!", 'error'); return; }
   let csvContent = "data:text/csv;charset=utf-8,Date,Type,Category,Note,Amount\n";
   allTransactions.value.forEach(tx => {
     const safeNote = tx.note ? `"${tx.note.replace(/"/g, '""')}"` : '""';
@@ -713,9 +756,9 @@ const updateProfile = async () => {
     const data = await res.json()
     if (data.status === 'success') {
       user.value = data.user; localStorage.setItem('user', JSON.stringify(data.user)); 
-      requireConfirmation('Success', 'Profile updated successfully!', null)
-    } else alert('Failed to update: ' + data.message)
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+      showToast('Profile successfully updated!')
+    } else showToast('Failed to update: ' + data.message, 'error')
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 const uploadAvatar = async (event) => {
@@ -726,8 +769,9 @@ const uploadAvatar = async (event) => {
     const data = await res.json()
     if (data.status === 'success') {
       user.value.profile_picture = data.filename; localStorage.setItem('user', JSON.stringify(user.value))
-    } else alert(data.message)
-  } catch (error) { alert("Upload failed.") }
+      showToast('Picture successfully uploaded!')
+    } else showToast(data.message, 'error')
+  } catch (error) { showToast("Upload failed.", 'error') }
 }
 
 const removeAvatar = () => {
@@ -737,22 +781,23 @@ const removeAvatar = () => {
       const data = await res.json()
       if (data.status === 'success') {
         user.value = data.user; localStorage.setItem('user', JSON.stringify(data.user))
+        showToast('Picture removed!')
       }
-    } catch (error) { alert("Failed to remove picture.") }
+    } catch (error) { showToast("Failed to remove picture.", 'error') }
   })
 }
 
 const updatePassword = async () => {
-  if (passForm.new !== passForm.confirm) { alert("New passwords don't match!"); return; }
+  if (passForm.new !== passForm.confirm) { showToast("New passwords don't match!", 'error'); return; }
   isSubmitting.value = true
   try {
     const res = await fetch('/backend/user/change_password.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, current_password: passForm.current, new_password: passForm.new }) })
     const data = await res.json()
     if (data.status === 'success') {
-      requireConfirmation('Success', 'Password changed successfully!', null)
+      showToast('Password securely changed!')
       passForm.current = ''; passForm.new = ''; passForm.confirm = '';
-    } else alert('Failed: ' + data.message)
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+    } else showToast('Failed: ' + data.message, 'error')
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 // ----- BILLS LOGIC -----
@@ -770,24 +815,23 @@ const submitBill = async () => {
   try {
     const res = await fetch('/backend/user/add_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, ...billForm }) })
     if ((await res.json()).status === 'success') { fetchBills(); isBillModalOpen.value = false; }
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 const payBill = async (id) => {
   try {
     const res = await fetch('/backend/user/pay_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id, month: selectedMonth.value }) })
     if ((await res.json()).status === 'success') {
-      fetchBills();
-      fetchDashboardStats();
-      fetchAllTransactions();
+      fetchBills(); fetchDashboardStats(); fetchAllTransactions();
+      showToast('Bill marked as paid!')
     }
-  } catch (e) { alert('Server error.') }
+  } catch (e) { showToast('Server error.', 'error') }
 }
 const deleteBill = (id) => {
   requireConfirmation('Delete Subscription', 'Are you sure you want to delete this bill?', async () => {
     try {
       const res = await fetch('/backend/user/delete_bill.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, bill_id: id }) })
       if ((await res.json()).status === 'success') fetchBills()
-    } catch (e) { alert('Server error.') }
+    } catch (e) { showToast('Server error.', 'error') }
   })
 }
 
@@ -857,7 +901,7 @@ const submitBudget = async () => {
       method: 'POST', body: JSON.stringify({ user_id: user.value.id, category_id: activeBudget.value.category_id, month: selectedMonth.value, budget_amount: budgetForm.amount })
     })
     if ((await res.json()).status === 'success') { fetchBudgets(); isBudgetModalOpen.value = false; }
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 // ----- GOALS LOGIC -----
@@ -889,7 +933,7 @@ const submitGoal = async () => {
   try {
     const res = await fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) })
     if ((await res.json()).status === 'success') { fetchGoals(); isGoalModalOpen.value = false; }
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 const deleteGoal = (id) => {
@@ -897,7 +941,7 @@ const deleteGoal = (id) => {
     try {
       const res = await fetch('/backend/user/delete_goal.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: id }) })
       if ((await res.json()).status === 'success') fetchGoals()
-    } catch (e) { alert('Server error.') }
+    } catch (e) { showToast('Server error.', 'error') }
   })
 }
 
@@ -908,12 +952,11 @@ const submitContribution = async () => {
   try {
     const res = await fetch('/backend/user/add_contribution.php', { method: 'POST', body: JSON.stringify({ user_id: user.value.id, goal_id: activeGoal.value.id, amount: contribForm.amount }) })
     if ((await res.json()).status === 'success') { 
-      fetchGoals(); 
-      fetchDashboardStats();
-      fetchAllTransactions();
+      fetchGoals(); fetchDashboardStats(); fetchAllTransactions();
+      showToast('Funds added!')
       isContribModalOpen.value = false; 
     }
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 // ----- TRANSACTION CRUD -----
@@ -941,9 +984,10 @@ const submitTransaction = async () => {
       if (activeTab.value === 'transactions') await fetchAllTransactions()
       if (activeTab.value === 'balances') await fetchBudgets()
       if (activeTab.value === 'analytics') await fetchAnalytics()
+      showToast('Transaction saved!')
       isTxModalOpen.value = false
     }
-  } catch (e) { alert('Server error.') } finally { isSubmitting.value = false }
+  } catch (e) { showToast('Server error.', 'error') } finally { isSubmitting.value = false }
 }
 
 const deleteTransaction = (id) => {
@@ -955,8 +999,9 @@ const deleteTransaction = (id) => {
         if (activeTab.value === 'transactions') await fetchAllTransactions()
         if (activeTab.value === 'balances') await fetchBudgets()
         if (activeTab.value === 'analytics') await fetchAnalytics()
+        showToast('Transaction removed!')
       }
-    } catch (e) { alert('Server error.') }
+    } catch (e) { showToast('Server error.', 'error') }
   })
 }
 
@@ -974,5 +1019,16 @@ const logout = () => { localStorage.removeItem('user'); router.push('/'); }
 .slide-fade-leave-to {
   transform: translateY(15px);
   opacity: 0;
+}
+
+/* New Toast Transition */
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
